@@ -9,10 +9,10 @@ public abstract class Artwork {
 
     public Artwork(int id, String title, int year, double price, Artist artist) {
         this.id = id;
-        this.title = title;
-        this.year = year;
-        this.price = price;
-        this.artist = artist;
+        setTitle(title);
+        setYear(year);
+        setPrice(price);
+        setArtist(artist);
     }
 
     public int getId() { return id; }
