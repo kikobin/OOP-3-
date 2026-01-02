@@ -1,6 +1,8 @@
 public class Sculpture extends Artwork {
     private String material;
 
+
+
     public Sculpture(int id, String title, int year, double price, Artist artist, String material) {
         super(id, title, year, price, artist);
         this.material = material;

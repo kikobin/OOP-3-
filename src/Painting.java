@@ -1,6 +1,8 @@
 public class Painting extends Artwork {
     private String technique;
 
+
+
     public Painting(int id, String title, int year, double price, Artist artist, String technique) {
         super(id, title, year, price, artist);
         this.technique = technique;

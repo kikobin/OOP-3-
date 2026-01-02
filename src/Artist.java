@@ -1,5 +1,7 @@
 import java.util.Objects;
 
+
+
 public class Artist {
     private int id;
     private String fullName;

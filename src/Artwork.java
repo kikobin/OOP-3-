@@ -26,6 +26,8 @@ public abstract class Artwork {
         this.title = title;
     }
 
+
+
     public void setYear(int year) {
         if (year < 1000 || year > 2100) return;
         this.year = year;

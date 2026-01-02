@@ -68,6 +68,8 @@ public class ArtGallery {
         return res;
     }
 
+
+
     public List<Artwork> filterByType(String type) {
         List<Artwork> res = new ArrayList<>();
         if (type == null) return res;
