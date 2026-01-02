@@ -21,10 +21,25 @@ public abstract class Artwork {
     public double getPrice() { return price; }
     public Artist getArtist() { return artist; }
 
-    public void setTitle(String title) { this.title = title; }
-    public void setYear(int year) { this.year = year; }
-    public void setPrice(double price) { this.price = price; }
-    public void setArtist(Artist artist) { this.artist = artist; }
+    public void setTitle(String title) {
+        if (title == null || title.trim().isEmpty()) return;
+        this.title = title;
+    }
+
+    public void setYear(int year) {
+        if (year < 1000 || year > 2100) return;
+        this.year = year;
+    }
+
+    public void setPrice(double price) {
+        if (price < 0) return;
+        this.price = price;
+    }
+
+    public void setArtist(Artist artist) {
+        if (artist == null) return;
+        this.artist = artist;
+    }
 
     public abstract String getType();
 
