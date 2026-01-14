@@ -14,6 +14,7 @@ public class Database {
 
 
 
+
     public static boolean insertArtist(Artist a) {
         String sql = "INSERT INTO artists(id, full_name, country) VALUES (?, ?, ?)";
         try (Connection c = getConnection();

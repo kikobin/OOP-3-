@@ -26,6 +26,7 @@ public class Main {
         Database.deleteArtwork(201);
 
 
+
         System.out.println("\nAfter update/delete:");
         for (Artist a : Database.getAllArtists()) System.out.println(a);
         for (Artwork aw : Database.getAllArtworks()) System.out.println(aw);
