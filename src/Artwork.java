@@ -58,10 +58,10 @@ public abstract class Artwork {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Artwork)) return false;
-        Artwork artwork = (Artwork) o;
-        return id == artwork.id;
+        if  (this == o) return true;
+        if (o == null) return false;
+        Artwork artwork = (Artwork)o;
+        return this.id == artwork.id;
     }
 
     @Override
