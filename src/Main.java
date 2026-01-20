@@ -1,34 +1,145 @@
+import java.util.List;
+import java.util.Scanner;
+
 public class Main {
+
+    private static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
 
+        while (true) {
+            System.out.println();
+            System.out.println("1 - Add artist");
+            System.out.println("2 - Show artists");
+            System.out.println("3 - Update artist country");
+            System.out.println("4 - Delete artist");
+            System.out.println("5 - Add artwork");
+            System.out.println("6 - Show artworks");
+            System.out.println("7 - Update artwork price");
+            System.out.println("8 - Delete artwork");
+            System.out.println("0 - Exit");
+            System.out.print("Choose option: ");
 
-        Database.insertArtist(new Artist(1, "Aruzhan K.", "Kazakhstan"));
-        Database.insertArtist(new Artist(2, "Dias N.", "Kazakhstan"));
+            int choice = Integer.parseInt(sc.nextLine());
 
-        Artist a1 = new Artist(1, "Aruzhan K.", "Kazakhstan");
-        Artist a2 = new Artist(2, "Dias N.", "Kazakhstan");
+            switch (choice) {
+                case 1 -> addArtist();
+                case 2 -> showArtists();
+                case 3 -> updateArtist();
+                case 4 -> deleteArtist();
+                case 5 -> addArtwork();
+                case 6 -> showArtworks();
+                case 7 -> updateArtworkPrice();
+                case 8 -> deleteArtwork();
+                case 0 -> {
+                    System.out.println("Program finished");
+                    return;
+                }
+                default -> System.out.println("Wrong option");
+            }
+        }
+    }
 
-        Database.insertArtwork(new Painting(101, "Sunset Steppe", 2022, 350000, a1, "Oil"));
-        Database.insertArtwork(new Sculpture(201, "Iron Wind", 2020, 550000, a2, "Metal"));
+    // ---------- ARTIST ----------
 
+    private static void addArtist() {
+        System.out.print("Id: ");
+        int id = Integer.parseInt(sc.nextLine());
 
-        System.out.println("Artists from DB:");
-        for (Artist a : Database.getAllArtists()) System.out.println(a);
+        System.out.print("Full name: ");
+        String name = sc.nextLine();
 
-        System.out.println("\nArtworks from DB:");
-        for (Artwork aw : Database.getAllArtworks()) System.out.println(aw);
+        System.out.print("Country: ");
+        String country = sc.nextLine();
 
+        Database.insertArtist(new Artist(id, name, country));
+    }
 
-        Database.updateArtistCountry(2, "Italy");
-        Database.updateArtworkPrice(101, 399999);
+    private static void showArtists() {
+        List<Artist> artists = Database.getAllArtists();
+        for (Artist a : artists) {
+            System.out.println(a);
+        }
+    }
 
+    private static void updateArtist() {
+        System.out.print("Artist id: ");
+        int id = Integer.parseInt(sc.nextLine());
 
-        Database.deleteArtwork(201);
+        System.out.print("New country: ");
+        String country = sc.nextLine();
 
+        Database.updateArtistCountry(id, country);
+    }
 
+    private static void deleteArtist() {
+        System.out.print("Artist id: ");
+        int id = Integer.parseInt(sc.nextLine());
 
-        System.out.println("\nAfter update/delete:");
-        for (Artist a : Database.getAllArtists()) System.out.println(a);
-        for (Artwork aw : Database.getAllArtworks()) System.out.println(aw);
+        Database.deleteArtist(id);
+    }
+
+    // ---------- ARTWORK ----------
+
+    private static void addArtwork() {
+        System.out.println("1 - Painting");
+        System.out.println("2 - Sculpture");
+        System.out.print("Type: ");
+        int type = Integer.parseInt(sc.nextLine());
+
+        System.out.print("Id: ");
+        int id = Integer.parseInt(sc.nextLine());
+
+        System.out.print("Title: ");
+        String title = sc.nextLine();
+
+        System.out.print("Year: ");
+        int year = Integer.parseInt(sc.nextLine());
+
+        System.out.print("Price: ");
+        double price = Double.parseDouble(sc.nextLine());
+
+        System.out.print("Artist id: ");
+        int artistId = Integer.parseInt(sc.nextLine());
+
+        Artist artist = Database.getArtistById(artistId);
+        if (artist == null) {
+            System.out.println("Artist not found");
+            return;
+        }
+
+        if (type == 1) {
+            System.out.print("Technique: ");
+            String tech = sc.nextLine();
+            Database.insertArtwork(new Painting(id, title, year, price, artist, tech));
+        } else if (type == 2) {
+            System.out.print("Material: ");
+            String mat = sc.nextLine();
+            Database.insertArtwork(new Sculpture(id, title, year, price, artist, mat));
+        }
+    }
+
+    private static void showArtworks() {
+        List<Artwork> artworks = Database.getAllArtworks();
+        for (Artwork a : artworks) {
+            System.out.println(a);
+        }
+    }
+
+    private static void updateArtworkPrice() {
+        System.out.print("Artwork id: ");
+        int id = Integer.parseInt(sc.nextLine());
+
+        System.out.print("New price: ");
+        double price = Double.parseDouble(sc.nextLine());
+
+        Database.updateArtworkPrice(id, price);
+    }
+
+    private static void deleteArtwork() {
+        System.out.print("Artwork id: ");
+        int id = Integer.parseInt(sc.nextLine());
+
+        Database.deleteArtwork(id);
     }
 }

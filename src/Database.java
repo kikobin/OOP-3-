@@ -180,4 +180,22 @@ public class Database {
             return false;
         }
     }
+    public static Artist getArtistById(int id) {
+        String sql = "SELECT id, full_name, country FROM artists WHERE id=?";
+        try (Connection c = getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Artist(
+                        rs.getInt("id"),
+                        rs.getString("full_name"),
+                        rs.getString("country")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("getArtistById error: " + e.getMessage());
+        }
+        return null;
+    }
 }
