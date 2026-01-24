@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Database {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String URL = "jdbc:postgresql://localhost:5432/oop";
     private static final String USER = "postgres";
     private static final String PASS = "0000";
 
@@ -14,14 +14,14 @@ public class Database {
 
 
 
-
     public static boolean insertArtist(Artist a) {
-        String sql = "INSERT INTO artists(id, full_name, country) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO artists(id, full_name, country,birthYear) VALUES (?, ?, ?,?)";
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, a.getId());
             ps.setString(2, a.getFullName());
             ps.setString(3, a.getCountry());
+            ps.setInt(4,a.getBitrhYear());
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.out.println("insertArtist error: " + e.getMessage());
@@ -31,7 +31,7 @@ public class Database {
 
     public static List<Artist> getAllArtists() {
         List<Artist> res = new ArrayList<>();
-        String sql = "SELECT id, full_name, country FROM artists ORDER BY id";
+        String sql = "SELECT id, full_name, country,birthyear FROM artists ORDER BY id";
         try (Connection c = getConnection();
              Statement st = c.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
@@ -39,11 +39,33 @@ public class Database {
                 res.add(new Artist(
                         rs.getInt("id"),
                         rs.getString("full_name"),
-                        rs.getString("country")
+                        rs.getString("country"),
+                        rs.getInt("birthyear")
                 ));
             }
         } catch (SQLException e) {
             System.out.println("getAllArtists error: " + e.getMessage());
+        }
+        return res;
+    }
+
+
+    public static List<Artist> getArtistsSortedByName() {
+        List<Artist> res = new ArrayList<>();
+        String sql = "SELECT id, full_name, country FROM artists ORDER BY full_name";
+        try (Connection c = getConnection();
+             Statement st = c.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                res.add(new Artist(
+                        rs.getInt("id"),
+                        rs.getString("full_name"),
+                        rs.getString("country"),
+                        rs.getInt("birthyear")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("getArtistsSortedByName error: " + e.getMessage());
         }
         return res;
     }
@@ -73,6 +95,27 @@ public class Database {
         }
     }
 
+    public static Artist getArtistById(int id) {
+        String sql = "SELECT id, full_name, country FROM artists WHERE id=?";
+        try (Connection c = getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Artist(
+                        rs.getInt("id"),
+                        rs.getString("full_name"),
+                        rs.getString("country"),
+                        rs.getInt("birthyear")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("getArtistById error: " + e.getMessage());
+        }
+        return null;
+    }
+
+
 
     public static boolean insertArtwork(Artwork a) {
         String sql = """
@@ -88,7 +131,7 @@ public class Database {
             ps.setDouble(4, a.getPrice());
             ps.setInt(5, a.getArtist().getId());
 
-            String type = a.getType(); // "Painting" or "Sculpture"
+            String type = a.getType();
             ps.setString(6, type);
 
             if (a instanceof Painting p) {
@@ -126,7 +169,8 @@ public class Database {
                 Artist artist = new Artist(
                         rs.getInt("artist_id"),
                         rs.getString("full_name"),
-                        rs.getString("country")
+                        rs.getString("country"),
+                        rs.getInt("birthyear")
                 );
 
                 String type = rs.getString("type");
@@ -156,6 +200,56 @@ public class Database {
         return res;
     }
 
+    // ORDER BY example: artworks sorted by price desc
+    public static List<Artwork> getArtworksSortedByPriceDesc() {
+        List<Artwork> res = new ArrayList<>();
+        String sql = """
+            SELECT aw.id, aw.title, aw.year, aw.price, aw.type, aw.technique, aw.material,
+                   ar.id AS artist_id, ar.full_name, ar.country
+            FROM artworks aw
+            JOIN artists ar ON ar.id = aw.artist_id
+            ORDER BY aw.price DESC
+            """;
+
+        try (Connection c = getConnection();
+             Statement st = c.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Artist artist = new Artist(
+                        rs.getInt("artist_id"),
+                        rs.getString("full_name"),
+                        rs.getString("country"),
+                        rs.getInt("birthyear")
+                );
+
+                String type = rs.getString("type");
+                if ("Painting".equals(type)) {
+                    res.add(new Painting(
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getInt("year"),
+                            rs.getDouble("price"),
+                            artist,
+                            rs.getString("technique")
+                    ));
+                } else {
+                    res.add(new Sculpture(
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getInt("year"),
+                            rs.getDouble("price"),
+                            artist,
+                            rs.getString("material")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("getArtworksSortedByPriceDesc error: " + e.getMessage());
+        }
+        return res;
+    }
+
     public static boolean updateArtworkPrice(int artworkId, double newPrice) {
         String sql = "UPDATE artworks SET price=? WHERE id=?";
         try (Connection c = getConnection();
@@ -180,22 +274,8 @@ public class Database {
             return false;
         }
     }
-    public static Artist getArtistById(int id) {
-        String sql = "SELECT id, full_name, country FROM artists WHERE id=?";
-        try (Connection c = getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Artist(
-                        rs.getInt("id"),
-                        rs.getString("full_name"),
-                        rs.getString("country")
-                );
-            }
-        } catch (SQLException e) {
-            System.out.println("getArtistById error: " + e.getMessage());
-        }
-        return null;
-    }
+
+
+
+
 }

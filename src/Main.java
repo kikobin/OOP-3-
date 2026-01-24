@@ -17,6 +17,8 @@ public class Main {
             System.out.println("6 - Show artworks");
             System.out.println("7 - Update artwork price");
             System.out.println("8 - Delete artwork");
+            System.out.println("9 - Show artists sorted by name (SQL ORDER BY)");
+            System.out.println("10 - Show artworks sorted by price (SQL ORDER BY)");
             System.out.println("0 - Exit");
             System.out.print("Choose option: ");
 
@@ -31,6 +33,8 @@ public class Main {
                 case 6 -> showArtworks();
                 case 7 -> updateArtworkPrice();
                 case 8 -> deleteArtwork();
+                case 9 -> showArtistsSorted();
+                case 10 -> showArtworksSorted();
                 case 0 -> {
                     System.out.println("Program finished");
                     return;
@@ -40,7 +44,7 @@ public class Main {
         }
     }
 
-    // ---------- ARTIST ----------
+
 
     private static void addArtist() {
         System.out.print("Id: ");
@@ -52,11 +56,21 @@ public class Main {
         System.out.print("Country: ");
         String country = sc.nextLine();
 
-        Database.insertArtist(new Artist(id, name, country));
+        System.out.print("Birth year: ");
+        int birthYear = Integer.parseInt(sc.nextLine());
+
+        Database.insertArtist(new Artist(id, name, country,birthYear));
     }
 
     private static void showArtists() {
         List<Artist> artists = Database.getAllArtists();
+        for (Artist a : artists) {
+            System.out.println(a);
+        }
+    }
+
+    private static void showArtistsSorted() {
+        List<Artist> artists = Database.getArtistsSortedByName();
         for (Artist a : artists) {
             System.out.println(a);
         }
@@ -79,7 +93,7 @@ public class Main {
         Database.deleteArtist(id);
     }
 
-    // ---------- ARTWORK ----------
+
 
     private static void addArtwork() {
         System.out.println("1 - Painting");
@@ -116,11 +130,20 @@ public class Main {
             System.out.print("Material: ");
             String mat = sc.nextLine();
             Database.insertArtwork(new Sculpture(id, title, year, price, artist, mat));
+        } else {
+            System.out.println("Wrong type");
         }
     }
 
     private static void showArtworks() {
         List<Artwork> artworks = Database.getAllArtworks();
+        for (Artwork a : artworks) {
+            System.out.println(a);
+        }
+    }
+
+    private static void showArtworksSorted() {
+        List<Artwork> artworks = Database.getArtworksSortedByPriceDesc();
         for (Artwork a : artworks) {
             System.out.println(a);
         }
